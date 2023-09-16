@@ -1,0 +1,5 @@
+## Required libraries
+# pip install speech_recognition
+# pip install sounddevice
+# pip install numpy
+# pip install scipy
