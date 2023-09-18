@@ -1,13 +1,16 @@
 import pytest
 from project import save_recording, record, recording_to_text
 
+
 def test_record():
     with pytest.raises(TypeError):
         record("cat")
 
+
 def test_missing_voice_file():
     with pytest.raises(TypeError):
         recording_to_text()
+
 
 def test_save_recording():
     with pytest.raises(SystemExit):
