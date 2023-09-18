@@ -33,41 +33,49 @@ def collect_user_input():
 
 def record(duration):
     SAMPLE_RATE = 48000
-    audio_recording = sd.rec(
-        duration * SAMPLE_RATE, samplerate=SAMPLE_RATE, channels=2, dtype="int32"
-    )
+    audio_recording = sd.rec(duration * SAMPLE_RATE,samplerate=SAMPLE_RATE, channels=2, dtype="int32")
     print("Recording Audio")
+    countdown(duration)
     sd.wait()
     print("Audio Recording complete, Playing Audio")
     sd.play(audio_recording, SAMPLE_RATE)
     sd.wait()
     while True:
-        save = (
-            input(
-                "Playback finished, do you want to save this recording? Please select yes or no. "
-            )
-        ).lower()
+        save = (input(
+                "Playback finished, do you want to save this recording? Please select yes or no. ")).lower()
         if save in ["yes", "y", "no", "n"]:
             return save, SAMPLE_RATE, audio_recording
         else:
             print("Invalid input, please try again")
 
 
-def save_recording(
-    save_or_not, SAMPLE_RATE, audio_recording
-):  # This processes whether the voice file will be saved or discarded
+def countdown(duration):
+    while duration:
+        mins, secs = divmod(duration, 60)
+        timer = '{:02d}:{:02d}'.format(mins, secs)
+        print(timer, end="\r")
+        time.sleep(1)
+        duration -= 1
+
+
+def save_recording(save_or_not, SAMPLE_RATE, audio_recording):  # This processes whether the voice file will be saved or discarded
     if save_or_not in ["yes", "y"]:
         custom_voice_file_name = input(
             "Do you want to use a custom name for the file? Please select yes or no. "
         )  # Option for user to insert their own name, instead of date and time as file name(s)
-        if custom_voice_file_name in ["yes", "y"]:
-            voice_file_name = (
-                input("Please insert a name for the voice file: ")
-            ) + ".wav"
-        else:
-            voice_file_name = time.strftime("%d_%m_%Y-%H_%M_%S.wav")
-        wav.write(voice_file_name, SAMPLE_RATE, audio_recording)
-        return voice_file_name
+        while True:
+            if custom_voice_file_name in ["yes", "y"]:
+                voice_file_name = (
+                    input("Please insert a name for the voice file: ")
+                ) + ".wav"
+            else:
+                voice_file_name = time.strftime("%d_%m_%Y-%H_%M_%S.wav")
+            try:
+                wav.write(voice_file_name, SAMPLE_RATE, audio_recording)
+            except FileNotFoundError: #This error is raised when the custom name contains certain special characters, here we loop the ptompt until a valid name is input.
+                print("Invalid name, please don't use any special characters.")
+                continue
+            return voice_file_name
     else:
         sys.exit("Recording will not be saved")
 
@@ -77,7 +85,7 @@ def recording_to_text(voice_file_name):
     with sr.AudioFile(voice_file_name) as source:  # This will open the file
         audio_data = r.record(source)  # load audio to memory
         text = r.recognize_google(
-            audio_data, language="en-US", key=None, show_all=True
+            audio_data, language="en-US", key=None
         )  # convert from speech to text
         return text
 

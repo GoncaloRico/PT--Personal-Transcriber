@@ -1,9 +1,9 @@
 Objective:
     This program seeks to record an audio input, and play it back to the user.
-    Once the user hears back teh recording, the program will prompt the user, asking if they would liek to keep or discard the recording, if "keep" is chosen, the recording will be saved as an audio file.
+    Once the user hears back teh recording, the program will prompt the user, asking if they would like to keep or discard the recording, if "keep" is chosen, the recording will be saved as an audio file.
 Structure:
     The collect_user_input() function will loop until the user inputs an integer for the duration
     The record() function will record the user input and play it back to them, will also ask the user to save or discard the recording
-    Then, the save_recording() function will either save the voice file (naming it the current date and time) or exit the program
+    Then, the save_recording() function will either save the voice file (naming it the current date and time/a custom name) or exit the program
     If the user chooses to save the audio recording, the recording_to_text() function will then transcribe the recording into text
     Finally, the save_text_file() function will save the transcription as a .txt file, with the same name as the voice recording
