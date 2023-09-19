@@ -1,6 +1,5 @@
 import speech_recognition as sr
 import sounddevice as sd
-import numpy as np
 import scipy.io.wavfile as wav
 import time
 import sys
@@ -33,7 +32,9 @@ def collect_user_input():
 
 def record(duration):
     SAMPLE_RATE = 48000
-    audio_recording = sd.rec(duration * SAMPLE_RATE,samplerate=SAMPLE_RATE, channels=2, dtype="int32")
+    audio_recording = sd.rec(
+        duration * SAMPLE_RATE, samplerate=SAMPLE_RATE, channels=2, dtype="int32"
+    )
     print("Recording Audio")
     countdown(duration)
     sd.wait()
@@ -41,8 +42,11 @@ def record(duration):
     sd.play(audio_recording, SAMPLE_RATE)
     sd.wait()
     while True:
-        save = (input(
-                "Playback finished, do you want to save this recording? Please select yes or no. ")).lower()
+        save = (
+            input(
+                "Playback finished, do you want to save this recording? Please select yes or no. "
+            )
+        ).lower()
         if save in ["yes", "y", "no", "n"]:
             return save, SAMPLE_RATE, audio_recording
         else:
@@ -52,13 +56,15 @@ def record(duration):
 def countdown(duration):
     while duration:
         mins, secs = divmod(duration, 60)
-        timer = '{:02d}:{:02d}'.format(mins, secs)
+        timer = "{:02d}:{:02d}".format(mins, secs)
         print(timer, end="\r")
         time.sleep(1)
         duration -= 1
 
 
-def save_recording(save_or_not, SAMPLE_RATE, audio_recording):  # This processes whether the voice file will be saved or discarded
+def save_recording(
+    save_or_not, SAMPLE_RATE, audio_recording
+):  # This processes whether the voice file will be saved or discarded
     if save_or_not in ["yes", "y"]:
         custom_voice_file_name = input(
             "Do you want to use a custom name for the file? Please select yes or no. "
@@ -72,7 +78,9 @@ def save_recording(save_or_not, SAMPLE_RATE, audio_recording):  # This processes
                 voice_file_name = time.strftime("%d_%m_%Y-%H_%M_%S.wav")
             try:
                 wav.write(voice_file_name, SAMPLE_RATE, audio_recording)
-            except FileNotFoundError: #This error is raised when the custom name contains certain special characters, here we loop the ptompt until a valid name is input.
+            except (
+                FileNotFoundError
+            ):  # This error is raised when the custom name contains certain special characters, here we loop the prompt until a valid name is input.
                 print("Invalid name, please don't use any special characters.")
                 continue
             return voice_file_name
